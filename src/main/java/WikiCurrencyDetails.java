@@ -15,6 +15,7 @@ public class WikiCurrencyDetails {
 
     final String currenciesWikipedia = "https://en.wikipedia.org/wiki/List_of_circulating_currencies";
     final String currencyDetail = "https://en.wikipedia.org/wiki/Abkhazian_apsar";
+    final String currencyDetail2 = "https://en.wikipedia.org/wiki/Argentine_peso";
     final WebClient webClient = new WebClient();
 
 
@@ -26,16 +27,15 @@ public class WikiCurrencyDetails {
         DomNode thead = trs.get(0);
         List<String> theadColumns = new ArrayList<>(6);
         Iterable<DomNode> children = thead.getChildren();
-        for (DomNode child: children) {
+        for (DomNode child : children) {
             theadColumns.add(child.asText());
         }
 
         DomNodeList<DomNode> trList = table.querySelectorAll("tr");
 
 
-
-        for (DomNode trNode: trList) {
-            System.out.println("TR: "+trNode.getIndex());
+        for (DomNode trNode : trList) {
+            System.out.println("TR: " + trNode.getIndex());
 
             // zobaczmy ile td'ków ma row
             String[] split = trNode.asText().split("\t");
@@ -43,7 +43,7 @@ public class WikiCurrencyDetails {
 
             DomNodeList<DomNode> tds = trNode.querySelectorAll("td");
 
-            for (DomNode td: tds) {
+            for (DomNode td : tds) {
                 // sprawdz czy td at index 1 hasRowSpan=...
 //                int rowspan = 0;
 //                if (td.getIndex() == 1) {
@@ -54,9 +54,9 @@ public class WikiCurrencyDetails {
 //                    }
 //                }
                 String tdText = td.asText();
-                System.out.print("\t\ttd:"+td.getIndex() + " " + tdText + "\t");
+                System.out.print("\t\ttd:" + td.getIndex() + " " + tdText + "\t");
 
-                if ( split.length == 6 && td.getIndex() == 3) {
+                if (split.length == 6 && td.getIndex() == 3) {
 
                     // pobierz href z 3
                     getAHrefAttr(td);
@@ -88,26 +88,40 @@ public class WikiCurrencyDetails {
     }
 
     public void getDetailedPage() throws IOException {
-        final HtmlPage page = webClient.getPage(currencyDetail);
+        final HtmlPage page = webClient.getPage(currencyDetail2);
         DomNodeList<DomNode> tr_thList = page.querySelectorAll("tr th");
 
-        for (DomNode trth: tr_thList) {
+        for (DomNode trth : tr_thList) {
             if (trth.asText().contains("Banknotes")) {
-                DomNode parentNode = trth.getParentNode();
-                Iterable<DomNode> children = parentNode.getChildren();
 
-                for (DomNode ch: children) {
-                    System.out.print(ch.asText() + "\t\t");
+                System.out.print("Banknotes: ");
+
+                // spr czy sibling ma tekst
+
+                if (trth.getNextSibling() != null && !trth.getNextSibling().asText().isEmpty()) {
+                    System.out.println(trth.getNextSibling().asText());
+                } else {
+
+                    DomNode parentNode = trth.getParentNode();
+
+                    System.out.println(parentNode.getNextSibling().asText());
+
                 }
                 System.out.println();
             }
 
             if (trth.asText().contains("Coins")) {
-                DomNode parentNode = trth.getParentNode();
-                Iterable<DomNode> children = parentNode.getChildren();
+                System.out.print("Coins: ");
 
-                for (DomNode ch: children) {
-                    System.out.print(ch.asText() + "\t\t");
+                // spr czy sibling ma tekst
+                if (trth.getNextSibling() != null && !trth.getNextSibling().asText().isEmpty()) {
+                    System.out.println(trth.getNextSibling().asText());
+                } else {
+
+                    DomNode parentNode = trth.getParentNode();
+
+                    System.out.println(parentNode.getNextSibling().asText());
+
                 }
                 System.out.println();
             }
