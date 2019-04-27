@@ -1,4 +1,3 @@
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -8,6 +7,7 @@ import org.w3c.dom.NamedNodeMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WikiCurrencyDetails {
 
@@ -73,7 +73,15 @@ public class WikiCurrencyDetails {
 
         System.out.println();
 
-        System.out.println(currencyDetailsList.size());
+        System.out.println("whole size: "+ currencyDetailsList.size());
+        List<String> distinct = currencyDetailsList.stream().distinct().collect(Collectors.toList());
+        System.out.println("distinct size: "+ distinct.size());
+
+
+        for (String link: distinct) {
+            System.out.println(link);
+            getDetailedPage("https://en.wikipedia.org"+link);
+        }
     }
 
     private static void getAHrefAttr(DomNode td) {
@@ -87,8 +95,8 @@ public class WikiCurrencyDetails {
         }
     }
 
-    public void getDetailedPage() throws IOException {
-        final HtmlPage page = webClient.getPage(currencyDetail2);
+    public void getDetailedPage(String url) throws IOException {
+        final HtmlPage page = webClient.getPage(url);
         DomNodeList<DomNode> tr_thList = page.querySelectorAll("tr th");
 
         for (DomNode trth : tr_thList) {
@@ -103,8 +111,14 @@ public class WikiCurrencyDetails {
                 } else {
 
                     DomNode parentNode = trth.getParentNode();
+                    DomNode freqUsed = parentNode.getNextSibling();
+                    System.out.println("\t"+freqUsed.asText());
 
-                    System.out.println(parentNode.getNextSibling().asText());
+                    if (freqUsed.asText().contains("Freq. used")) {
+                        DomNode rarelyUsed = freqUsed.getNextSibling();
+                        System.out.println("\t\t\t"+rarelyUsed.asText());
+                    }
+                    System.out.println();
 
                 }
                 System.out.println();
@@ -119,8 +133,14 @@ public class WikiCurrencyDetails {
                 } else {
 
                     DomNode parentNode = trth.getParentNode();
+                    DomNode freqUsed = parentNode.getNextSibling();
+                    System.out.println("\t"+freqUsed.asText());
 
-                    System.out.println(parentNode.getNextSibling().asText());
+                    if (freqUsed.asText().contains("Freq. used")) {
+                        DomNode rarelyUsed = freqUsed.getNextSibling();
+                        System.out.println("\t\t\t"+rarelyUsed.asText());
+                    }
+                    System.out.println();
 
                 }
                 System.out.println();

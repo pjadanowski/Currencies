@@ -26,7 +26,9 @@ public class Main {
 //        final HtmlPage page = webClient.getPage(currenciesWikipedia);
 
         WikiCurrencyDetails wikiCurrencyDetails = new WikiCurrencyDetails();
-        wikiCurrencyDetails.getDetailedPage();
+
+        wikiCurrencyDetails.getMainCurrencyPage();
+//        wikiCurrencyDetails.getDetailedPage();
 
 
 
